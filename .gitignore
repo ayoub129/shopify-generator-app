@@ -30,3 +30,5 @@ Thumbs.db
 # Cache
 .cache/
 .next/
+.vercel
+.env*.local
