@@ -1,6 +1,6 @@
 // api/generate.js
 import 'dotenv/config';
-import fetch from 'node-fetch';
+// Using native fetch (available in Node.js 18+)
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
