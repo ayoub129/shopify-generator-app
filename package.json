@@ -4,9 +4,6 @@
   "description": "This repository contains the backend and integration logic for the **AI Bike Customizer**, a chat-based image generation feature built for a Shopify store.   Users describe their dream motorcycle in natural language, and the system generates a realistic custom bike mockup using **Google Gemini Image API**.",
   "main": "index.js",
   "type": "module",
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
