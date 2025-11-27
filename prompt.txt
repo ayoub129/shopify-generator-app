@@ -1,0 +1,22 @@
+Generate a high-resolution, studio-grade motorcycle fairing kit mockup in the same style as professional product listings. Use a clean exploded layout showing all fairing pieces neatly separated and arranged symmetrically from the front view.
+
+Motorcycle model: {{BIKE_MODEL}}  
+Year range: {{BIKE_YEAR}}  
+Fairing style: {{STYLE_NAME}}  
+Primary colors: {{PRIMARY_COLORS}}  
+Accent colors or decals: {{ACCENTS_OR_DECALS}}  
+Material finish: {{FINISH}} (matte, glossy, metallic, carbon, etc.)
+
+Requirements:
+• Hyper-realistic ABS motorcycle fairings  
+• Accurate shape for the exact model  
+• Clean exploded layout (front-facing)  
+• Soft studio lighting with subtle reflections  
+• Sharp edges, high contrast details  
+• Neutral dark textured background (unless white is required)  
+• No distracting environment, no extra objects  
+• Realistic surface reflections and color accuracy  
+• Clear, readable branding: {{BRAND_LOGOS}}  
+• Include all major fairing kit components  
+
+Ensure the final output looks like a premium product photo for an online store.
