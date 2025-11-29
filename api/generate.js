@@ -128,10 +128,7 @@ RENDERING REQUIREMENTS
             role: 'user',
             parts: [{ text: finalPrompt }]
           }
-        ],
-        generationConfig: {
-          responseMimeType: 'application/json'
-        }
+        ]
       })
     });
 
