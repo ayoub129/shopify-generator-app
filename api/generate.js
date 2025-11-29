@@ -115,8 +115,9 @@ RENDERING REQUIREMENTS
       });
     }
 
+    // Try v1 API first, fallback to v1beta if needed
     const geminiUrl =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
+      'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent';
 
     const response = await fetch(`${geminiUrl}?key=${encodeURIComponent(GEMINI_API_KEY)}`, {
       method: 'POST',
