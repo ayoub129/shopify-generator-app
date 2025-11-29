@@ -128,9 +128,6 @@ RENDERING REQUIREMENTS
             parts: [{ text: finalPrompt }]
           }
         ],
-        generationConfig: {
-          responseMimeType: "image/png"  // 🔥 ensures PNG output
-        }
       })
     });
 
