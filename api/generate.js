@@ -1,4 +1,4 @@
-// api/generate.js
+// api/generate.js 
 import 'dotenv/config';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -62,14 +62,14 @@ export default async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
 
     const {
-      prompt,            // the user's description
-      model,             // ex: "Yamaha YZF-R1"
-      yearRange,         // ex: "2015–2020"
-      styleName,         // ex: "Racing Blue Edition"
-      primaryColors,     // ex: "metallic blue + white"
-      accents,           // ex: "R1 decals"
-      finish,            // ex: "glossy ABS"
-      brandLogos         // ex: "Yamaha, R1"
+      prompt,            
+      model,             
+      yearRange,         
+      styleName,         
+      primaryColors,     
+      accents,           
+      finish,            
+      brandLogos         
     } = body;
 
     if (!prompt && !model) {
@@ -79,7 +79,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // 📌 Build FINAL PROMPT → user settings + system intelligence
     const finalPrompt = `
 ${SYSTEM_PREFIX}
 
@@ -115,9 +114,9 @@ RENDERING REQUIREMENTS
       });
     }
 
-    // Use gemini-pro model (most stable and widely available)
+    // ✅ Updated working model for image generation
     const geminiUrl =
-      'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent';
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
 
     const response = await fetch(`${geminiUrl}?key=${encodeURIComponent(GEMINI_API_KEY)}`, {
       method: 'POST',
@@ -128,7 +127,10 @@ RENDERING REQUIREMENTS
             role: 'user',
             parts: [{ text: finalPrompt }]
           }
-        ]
+        ],
+        generationConfig: {
+          responseMimeType: "image/png"  // 🔥 ensures PNG output
+        }
       })
     });
 
@@ -142,39 +144,28 @@ RENDERING REQUIREMENTS
     }
 
     const data = await response.json();
-    
-    // Check if response contains image data
+
+    // Check image response
     const imagePart =
       data?.candidates?.[0]?.content?.parts?.find(p => p.inlineData && p.inlineData.data);
 
-    if (imagePart) {
-      // Image data found
-      const base64 = imagePart.inlineData.data;
-      const mimeType = imagePart.inlineData.mimeType || 'image/png';
-      const dataUrl = `data:${mimeType};base64,${base64}`;
-
-      return res.status(200).json({
-        success: true,
-        imageDataUrl: dataUrl
-      });
-    }
-
-    // If no image, check for text response (Gemini might return text description)
-    const textPart = data?.candidates?.[0]?.content?.parts?.find(p => p.text);
-    if (textPart) {
-      console.error('Gemini returned text instead of image:', textPart.text);
+    if (!imagePart) {
       return res.status(500).json({
         success: false,
-        error: 'Gemini API does not support direct image generation. Consider using Google Imagen API or another image generation service.',
-        details: textPart.text
+        error: 'No image data returned'
       });
     }
 
-    return res.status(500).json({
-      success: false,
-      error: 'No image data returned from Gemini API',
-      response: JSON.stringify(data, null, 2)
+    const base64 = imagePart.inlineData.data;
+    const mimeType = imagePart.inlineData.mimeType || 'image/png';
+
+    const dataUrl = `data:${mimeType};base64,${base64}`;
+
+    return res.status(200).json({
+      success: true,
+      imageDataUrl: dataUrl
     });
+
   } catch (err) {
     return res.status(500).json({
       success: false,
