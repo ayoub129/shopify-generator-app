@@ -129,7 +129,7 @@ RENDERING REQUIREMENTS
           }
         ],
         generationConfig: {
-          responseMimeType: 'image/png'
+          responseMimeType: 'application/json'
         }
       })
     });
@@ -144,24 +144,38 @@ RENDERING REQUIREMENTS
     }
 
     const data = await response.json();
+    
+    // Check if response contains image data
     const imagePart =
       data?.candidates?.[0]?.content?.parts?.find(p => p.inlineData && p.inlineData.data);
 
-    if (!imagePart) {
-      return res.status(500).json({
-        success: false,
-        error: 'No image data returned'
+    if (imagePart) {
+      // Image data found
+      const base64 = imagePart.inlineData.data;
+      const mimeType = imagePart.inlineData.mimeType || 'image/png';
+      const dataUrl = `data:${mimeType};base64,${base64}`;
+
+      return res.status(200).json({
+        success: true,
+        imageDataUrl: dataUrl
       });
     }
 
-    const base64 = imagePart.inlineData.data;
-    const mimeType = imagePart.inlineData.mimeType || 'image/png';
+    // If no image, check for text response (Gemini might return text description)
+    const textPart = data?.candidates?.[0]?.content?.parts?.find(p => p.text);
+    if (textPart) {
+      console.error('Gemini returned text instead of image:', textPart.text);
+      return res.status(500).json({
+        success: false,
+        error: 'Gemini API does not support direct image generation. Consider using Google Imagen API or another image generation service.',
+        details: textPart.text
+      });
+    }
 
-    const dataUrl = `data:${mimeType};base64,${base64}`;
-
-    return res.status(200).json({
-      success: true,
-      imageDataUrl: dataUrl
+    return res.status(500).json({
+      success: false,
+      error: 'No image data returned from Gemini API',
+      response: JSON.stringify(data, null, 2)
     });
   } catch (err) {
     return res.status(500).json({
