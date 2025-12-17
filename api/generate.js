@@ -116,7 +116,7 @@ RENDERING REQUIREMENTS
 
     // ✅ Updated working model for image generation
     const geminiUrl =
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent';
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent';
 
     const response = await fetch(`${geminiUrl}?key=${encodeURIComponent(GEMINI_API_KEY)}`, {
       method: 'POST',
@@ -129,7 +129,6 @@ RENDERING REQUIREMENTS
           }
         ],
         generationConfig: {
-          responseMimeType: 'application/json',
           responseModalities: ['IMAGE']
         }
       })
