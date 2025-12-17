@@ -128,6 +128,10 @@ RENDERING REQUIREMENTS
             parts: [{ text: finalPrompt }]
           }
         ],
+        generationConfig: {
+          responseMimeType: 'image/png',
+          responseModalities: ['IMAGE']
+        }
       })
     });
 
@@ -142,14 +146,49 @@ RENDERING REQUIREMENTS
 
     const data = await response.json();
 
-    // Check image response
+    // Debug: Log the response structure to understand what we're getting
+    console.log('Gemini API Response:', JSON.stringify(data, null, 2));
+
+    // Check image response - Gemini may return images in different formats
     const imagePart =
       data?.candidates?.[0]?.content?.parts?.find(p => p.inlineData && p.inlineData.data);
 
     if (!imagePart) {
+      // Check if we got text instead of image
+      const textPart = data?.candidates?.[0]?.content?.parts?.find(p => p.text);
+      const textResponse = textPart?.text || null;
+
+      // Log the actual response structure for debugging
+      const responseStructure = {
+        hasCandidates: !!data?.candidates,
+        candidatesLength: data?.candidates?.length || 0,
+        firstCandidate: data?.candidates?.[0] ? {
+          hasContent: !!data.candidates[0].content,
+          hasParts: !!data.candidates[0].content?.parts,
+          partsLength: data.candidates[0].content?.parts?.length || 0,
+          partsTypes: data.candidates[0].content?.parts?.map(p => Object.keys(p)) || []
+        } : null,
+        textResponse: textResponse ? textResponse.substring(0, 500) : null, // First 500 chars of text if any
+        error: data?.error || null
+      };
+
+      // If we got an error from Gemini API, include it
+      if (data?.error) {
+        return res.status(500).json({
+          success: false,
+          error: 'Gemini API error',
+          details: data.error,
+          debug: responseStructure
+        });
+      }
+
       return res.status(500).json({
         success: false,
-        error: 'No image data returned'
+        error: 'No image data returned',
+        debug: responseStructure,
+        message: textResponse 
+          ? 'The Gemini API returned text instead of an image. The model may not support image generation, or the request format may be incorrect.'
+          : 'The Gemini API did not return image data in the expected format.'
       });
     }
 
