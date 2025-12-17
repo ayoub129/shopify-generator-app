@@ -129,7 +129,7 @@ RENDERING REQUIREMENTS
           }
         ],
         generationConfig: {
-          responseMimeType: 'image/png',
+          responseMimeType: 'application/json',
           responseModalities: ['IMAGE']
         }
       })
